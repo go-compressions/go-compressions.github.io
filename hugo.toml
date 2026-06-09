@@ -1,0 +1,42 @@
+baseURL = 'https://go-compressions.github.io/'
+locale  = 'en-us'
+title   = 'go-compressions'
+# No theme — layouts live in ./layouts
+
+disableKinds = ['taxonomy', 'term', 'rss', 'sitemap']
+
+[params]
+  description = "go-compressions houses pure-Go byte-stream transformation primitives: compression codecs (LZFSE / LZVN) and content-addressable hash functions (BLAKE3). Allocation-aware, multi-arch, zero-cgo."
+  brand       = "go-compressions"
+  github      = "go-compressions"
+  heroAccent  = "go-compressions"
+  heroTagline = "Byte-stream primitives in pure Go. Codecs and content-addressable hashes."
+
+  heroIntro = [
+    "<strong>go-compressions</strong> is a small family of Go modules sitting at the same layer of the stack: allocation-aware, zero-copy-friendly primitives that turn a byte stream into another, smaller or fingerprinted, byte stream. Two adjacent concerns live here &mdash; lossless compression codecs and content-addressable hash functions &mdash; because they share that same place in the stack and the same engineering bar.",
+    "Pure Go, no cgo, multi-arch. Codecs are fuzz-tested against upstream reference implementations ; hashes are cross-checked against the spec test vectors. 100% test coverage is the bar on every module."
+  ]
+
+  meshCaption = "<strong>Byte streams in, byte streams out.</strong> Compression codecs and content-addressable hashes live in the same module family because they sit at the same layer &mdash; pure-Go transforms over a byte stream."
+
+[menu]
+  [[menu.main]]
+    identifier = "why"
+    name       = "Why"
+    url        = "#why"
+    weight     = 10
+  [[menu.main]]
+    identifier = "scope"
+    name       = "Scope"
+    url        = "#scope"
+    weight     = 20
+  [[menu.main]]
+    identifier = "repos"
+    name       = "Repos"
+    url        = "#repos"
+    weight     = 30
+  [[menu.main]]
+    identifier = "quality"
+    name       = "Quality"
+    url        = "#quality"
+    weight     = 40
