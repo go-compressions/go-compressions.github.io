@@ -6,35 +6,47 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   unsafe = true
 
 # Each repo card. "result" is the honest headline (wins AND parities/limits).
-# "kind" tags codec vs hash. "arch" states the SIMD coverage honestly — which
-# repos run go-asmgen SIMD on all 6 of Go's 64-bit targets vs pure-Go scalar.
+# "kind" = codec vs hash; "type" = lib vs cli (every lib has a reference CLI).
+# "arch" states the SIMD coverage honestly (6-arch SIMD vs pure-Go scalar).
 [[params.repos]]
   name = "lz4"
   accel = "LZ4 block codec (CompressBlock / DecompressBlock)"
   kind = "codec"
+  type = "lib"
   arch = "SIMD on all 6 arches (match extension via matchlen)"
   result = "wire-compatible with pierrec/lz4 — beats it on compression ratio (text ~4.6% smaller); honestly slower on speed. Match extension delegates to matchlen's SIMD common-prefix kernel."
+[[params.repos]]
+  name = "lz4c"
+  accel = "LZ4 CLI (compress / decompress)"
+  kind = "codec"
+  type = "cli"
+  arch = "pure-Go CLI (rides the lz4 lib's SIMD)"
+  result = "single static-binary CLI over the lz4 library — stdin/stdout by default, -d decompress, -o output, -v summary (ratio + timing). Pure Go, no C toolchain. The reference CLI for the lz4 lib."
 [[params.repos]]
   name = "lzfse"
   accel = "Apple LZFSE / LZVN codec (Compress / Decompress)"
   kind = "codec"
+  type = "lib"
   arch = "pure-Go (scalar)"
   result = "byte-compatible with the reference liblzfse: LZFSE = LZVN + FSE entropy stage. Auto-picks LZVN for ≤4 KiB inputs, LZFSE V1/V2 for larger; round-trips against Apple's C reference."
 [[params.repos]]
   name = "lzfsec"
-  accel = "lzfsec CLI (compress / decompress)"
+  accel = "LZFSE CLI (compress / decompress)"
   kind = "codec"
+  type = "cli"
   arch = "pure-Go (scalar)"
   result = "single static-binary CLI over lzfse — stdin/stdout by default, optional -v summary (ratio + timing). Pure Go, no C toolchain."
 [[params.repos]]
   name = "blake3"
   accel = "BLAKE3 cryptographic hash (Sum256 / Sum512 / XOF)"
   kind = "hash"
+  type = "lib"
   arch = "SIMD mix4 on all 6 arches (VSX / vector facility)"
   result = "pure-Go, cgo-free BLAKE3, verified against the official test vectors; the mix4 core runs go-asmgen SIMD on all 6 of Go's 64-bit targets. Streaming hash.Hash-style API plus arbitrary-length extendable output. Default unkeyed mode (keyed / KDF not implemented)."
 [[params.repos]]
   name = "b3sum"
-  accel = "b3sum CLI (print / verify BLAKE3 checksums)"
+  accel = "BLAKE3 checksum CLI (print / verify)"
   kind = "hash"
+  type = "cli"
   arch = "SIMD on all 6 arches (via blake3)"
   result = "pure-Go, cgo-free b3sum — output compatible with the reference Rust b3sum (<hex>  <name>). Hashes files/stdin, --check verification, --length / --no-names. Single static binary."
