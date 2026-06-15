@@ -70,9 +70,8 @@
       <strong>cgo-free</strong> on plain <code>go build</code>.</p>
     <div class="pills">
       <span class="pill">CGO_ENABLED=0</span>
-      <span class="pill">go-asmgen-powered SIMD</span>
-      <span class="pill">up to 6 architectures</span>
-      <span class="pill">amd64 · arm64 · riscv64 · loong64 · ppc64le · s390x</span>
+      <span class="pill">go-asmgen-powered SIMD on <strong>all 6 of Go's 64-bit targets</strong></span>
+      <span class="pill">amd64 · arm64 · riscv64 · loong64 · <strong>ppc64le (VSX)</strong> · <strong>s390x (vector facility)</strong></span>
       <span class="pill">reference-validated</span>
       <span class="pill">100% coverage</span>
       <span class="pill">honest benchmarks</span>
@@ -111,6 +110,7 @@
           <span class="kind {{ .kind }}">{{ .kind }}</span>
         </h3>
         <p class="accel">{{ .accel }}</p>
+        <p class="arch" style="font-size:.85rem;font-weight:600;margin:.3rem 0 0;color:var(--accent)">{{ .arch }}</p>
         <p>{{ .result }}</p>
         <div class="badges">
           <a href="https://github.com/go-compressions/{{ .name }}/actions/workflows/ci.yml"><img src="https://github.com/go-compressions/{{ .name }}/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
