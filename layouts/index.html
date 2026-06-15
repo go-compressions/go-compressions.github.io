@@ -1,105 +1,135 @@
-{{ define "main" }}
-<section class="hero">
-  <img class="hero-logo" src="{{ "img/logo.svg" | relURL }}" alt="go-compressions logo" width="96" height="96">
-  <h1>
-    <span class="accent">{{ .Site.Params.heroAccent }}</span>
-    {{- with .Site.Params.statusBadge }}<span class="status">{{ . }}</span>{{ end -}}
-  </h1>
-  {{ with .Site.Params.heroTagline }}<p class="tag">{{ . }}</p>{{ end }}
-  <div class="intro">
-    {{ range .Site.Params.heroIntro }}<p>{{ . | safeHTML }}</p>{{ end }}
-  </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ .Site.Title }} — pure-Go compression codecs and content-addressable hashes</title>
+<meta name="description" content="Pure-Go byte-stream primitives: lossless compression codecs (lz4, lzfse / lzvn, lzfsec) and content-addressable hashes (blake3, b3sum). CGO_ENABLED=0, 100% coverage, honest benchmarks; lz4 match extension and blake3 ride go-asmgen SIMD on all 6 of Go's 64-bit targets — amd64/arm64/riscv64/loong64/ppc64le/s390x.">
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1b1f24; --muted: #57606a; --card: #f6f8fa;
+    --border: #d0d7de; --accent: #0079a8; --accent-fg: #ffffff;
+    --codec: #0079a8; --hash: #9a6700;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1; --card: #161b22;
+      --border: #30363d; --accent: #22cce2; --accent-fg: #0d1117;
+      --codec: #22cce2; --hash: #d29922;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+  header { padding: 72px 0 32px; text-align: center; }
+  .logo { width: 88px; height: 88px; margin: 0 auto 18px; display: block; }
+  h1 { font-size: 2.6rem; margin: 0 0 .3em; letter-spacing: -.02em; }
+  .tagline { font-size: 1.2rem; color: var(--muted); margin: 0 auto; max-width: 680px; }
+  .pills { margin: 22px 0 0; }
+  .pill {
+    display: inline-block; margin: 4px; padding: 3px 10px; font-size: .82rem;
+    color: var(--muted); background: var(--card); border: 1px solid var(--border); border-radius: 999px;
+  }
+  .cta { margin: 30px 0 0; }
+  .btn {
+    display: inline-block; padding: 10px 18px; margin: 4px; border-radius: 8px; text-decoration: none;
+    font-weight: 600; border: 1px solid var(--border);
+  }
+  .btn.primary { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+  .btn.ghost { color: var(--fg); background: transparent; }
+  .lead { color: var(--fg); max-width: 800px; margin: 8px auto 0; text-align: center; }
+  .lead code { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
+  h2.section { text-align: center; margin: 40px 0 4px; font-size: 1.4rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; padding: 16px 0 8px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; }
+  .card h3 { margin: 0 0 .35em; font-size: 1.2rem; display: flex; align-items: center; justify-content: space-between; }
+  .card h3 a { text-decoration: none; }
+  .card .accel { color: var(--muted); font-size: .85rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; margin: 0 0 .6em; }
+  .card p { margin: 0 0 .8em; color: var(--fg); font-size: .95rem; }
+  .card .badges { margin-top: auto; }
+  .card .badges img { height: 20px; vertical-align: middle; }
+  .kind { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); }
+  .kind.codec { color: var(--codec); }
+  .kind.hash { color: var(--hash); }
+  .principles { color: var(--muted); text-align: center; padding: 10px 0 0; max-width: 820px; margin: 0 auto; }
+  footer { color: var(--muted); text-align: center; padding: 40px 0 56px; font-size: .9rem; }
+  a { color: var(--accent); }
+</style>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+</head>
+<body>
+  <header class="wrap">
+    <img class="logo" src="/img/logo.svg" alt="go-compressions logo" width="88" height="88">
+    <h1>go-compressions</h1>
+    <p class="tagline">Pure-Go <strong>byte-stream primitives</strong> — lossless compression
+      codecs (<code>lz4</code>, <code>lzfse</code>, <code>lzfsec</code>) and content-addressable
+      hashes (<code>blake3</code>, <code>b3sum</code>), allocation-aware and
+      <strong>cgo-free</strong> on plain <code>go build</code>.</p>
+    <div class="pills">
+      <span class="pill">CGO_ENABLED=0</span>
+      <span class="pill">go-asmgen-powered SIMD</span>
+      <span class="pill">up to 6 architectures</span>
+      <span class="pill">amd64 · arm64 · riscv64 · loong64 · ppc64le · s390x</span>
+      <span class="pill">reference-validated</span>
+      <span class="pill">100% coverage</span>
+      <span class="pill">honest benchmarks</span>
+    </div>
+    <div class="cta">
+      <a class="btn primary" href="https://go-compressions.github.io/docs/">Documentation</a>
+      <a class="btn ghost" href="https://github.com/go-compressions">GitHub</a>
+    </div>
+  </header>
 
-  {{ partial "mesh.html" . }}
-</section>
+  <main class="wrap">
+    <p class="lead">Two adjacent concerns live here &mdash; lossless <strong>compression codecs</strong>
+      and content-addressable <strong>hash functions</strong> &mdash; because they sit at the same
+      layer of the stack: allocation-aware, zero-copy-friendly primitives that turn one byte stream
+      into another, smaller or fingerprinted. Different math, same place in the stack, same
+      engineering bar. Codecs are fuzz-tested against the upstream reference implementations
+      (<code>pierrec/lz4</code>, Apple's <code>liblzfse</code>); hashes are cross-checked against the
+      spec test vectors.</p>
 
-<section id="why">
-  <h2>Why go-compressions</h2>
-  <p>
-    Despite the name, this org houses the broader family of <strong>byte-stream
-    transformation primitives</strong> &mdash; both lossless compression codecs <em>and</em>
-    content-addressable hash functions. They live together because they sit at the same
-    layer of the stack : pure-Go, allocation-aware, zero-copy-friendly primitives that
-    everything above them builds on. Different math, same place in the stack. A storage
-    layer hashes its blobs and compresses its bodies side by side ; it's natural to ship
-    those primitives side by side too.
-  </p>
-</section>
+    <p class="lead"><strong>Pure Go, no cgo, multi-arch.</strong> The numbers are
+      <strong>measured and honest</strong> &mdash; wins and the cases where we trade speed for ratio.
+      <code>lz4</code>'s hot match-extension loop and <code>blake3</code>'s mixing ride
+      <a href="https://github.com/go-asmgen/asmgen">go-asmgen</a> SIMD &mdash; the
+      <a href="https://github.com/go-compressions/matchlen">matchlen</a> common-prefix kernel now runs
+      vectorized on <strong>all six 64-bit Go targets</strong> (amd64, arm64, riscv64, loong64,
+      <strong>ppc64le VSX</strong> and <strong>s390x vector facility, big-endian</strong>); the
+      ppc64le and s390x paths are qemu-validated (byte-identical to scalar), with native throughput
+      pending hardware. <code>100%</code> statement coverage is a CI gate on every module.</p>
 
-<section id="scope">
-  <h2>Two concerns, one layer</h2>
-  <div class="grid">
-    <div class="card">
-      <h4>Compression codecs</h4>
-      <p>Pure-Go implementations of stream compressors. <strong>LZFSE / LZVN</strong> today &mdash; Apple's algorithm, where LZFSE is LZVN followed by an entropy stage. More codecs land as concrete callers need them.</p>
-    </div>
-    <div class="card">
-      <h4>Content-addressable hashes</h4>
-      <p>Pure-Go implementations of modern cryptographic / keyed hashes. <strong>BLAKE3</strong> today &mdash; hash, keyed hash, KDF, all spec-conformant against the reference test vectors.</p>
-    </div>
-    <div class="card">
-      <h4>Why together</h4>
-      <p>Same allocation discipline, same multi-arch story, same fuzz / cross-check methodology. A content-addressable storage stack reaches for both; shipping them in one org keeps the engineering bar consistent.</p>
-    </div>
-  </div>
-</section>
+    <h2 class="section">Repositories</h2>
+    <section class="grid">
+      {{ range .Site.Params.repos }}
+      <article class="card">
+        <h3>
+          <a href="https://github.com/go-compressions/{{ .name }}"><code>{{ .name }}</code></a>
+          <span class="kind {{ .kind }}">{{ .kind }}</span>
+        </h3>
+        <p class="accel">{{ .accel }}</p>
+        <p>{{ .result }}</p>
+        <div class="badges">
+          <a href="https://github.com/go-compressions/{{ .name }}/actions/workflows/ci.yml"><img src="https://github.com/go-compressions/{{ .name }}/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+          <img src="https://img.shields.io/badge/coverage-100%25-brightgreen" alt="coverage 100%">
+        </div>
+      </article>
+      {{ end }}
+    </section>
+    <p class="principles">Every module is pure Go with <code>CGO_ENABLED=0</code>, allocation-aware on
+      its hot paths, and held at 100% statement coverage as a CI gate. Codecs are fuzz-tested for
+      byte-exact round-trips against their upstream reference implementations; hashes are verified
+      against the official spec vectors. SIMD acceleration (via go-asmgen) is layered behind build
+      tags where it helps &mdash; matchlen's common-prefix kernel covers all six of Go's 64-bit
+      SIMD targets. BSD-3-Clause throughout.</p>
+  </main>
 
-<section id="repos">
-  <h2>Repositories</h2>
-  <h3>Compression codecs</h3>
-  <div class="grid">
-    <div class="card">
-      <h4><a href="https://github.com/go-compressions/lz4">lz4</a></h4>
-      <p>Pure-Go LZ4 block codec, wire-compatible with <code>pierrec/lz4</code>. Beats <code>pierrec</code> on compression ratio (text ~4.6% smaller); honestly slower on speed. Match extension delegates to <a href="https://github.com/go-compressions/matchlen">matchlen</a>, whose SIMD common-prefix kernel runs on all six of Go's 64-bit targets.</p>
-    </div>
-    <div class="card">
-      <h4><a href="https://github.com/go-compressions/lzfse">lzfse</a></h4>
-      <p>Pure-Go LZFSE / LZVN codec. LZFSE = LZVN + entropy stage, mirroring Apple's reference C implementation.</p>
-    </div>
-    <div class="card">
-      <h4><a href="https://github.com/go-compressions/lzfsec">lzfsec</a></h4>
-      <p>CLI wrapper around <code>lzfse</code>, mirroring the interface of Apple's reference <code>lzfse</code> binary.</p>
-    </div>
-  </div>
-  <h3>Content-addressable hashes</h3>
-  <div class="grid">
-    <div class="card">
-      <h4><a href="https://github.com/go-compressions/blake3">blake3</a></h4>
-      <p>Pure-Go <a href="https://github.com/BLAKE3-team/BLAKE3">BLAKE3</a> hash, keyed hash, and KDF. Cross-checked against the reference test vectors.</p>
-    </div>
-    <div class="card">
-      <h4><a href="https://github.com/go-compressions/b3sum">b3sum</a></h4>
-      <p>Pure-Go <code>b3sum</code> CLI matching the reference Rust <a href="https://crates.io/crates/b3sum"><code>b3sum</code></a>.</p>
-    </div>
-  </div>
-  <h3>Docs</h3>
-  <div class="grid">
-    <div class="card">
-      <h4><a href="https://go-compressions.github.io/docs/">docs</a></h4>
-      <p>Versioned documentation site (MkDocs Material): per-repo API, algorithm and honest performance pages, plus the org methodology. <a href="https://github.com/go-compressions/docs">Source →</a></p>
-    </div>
-  </div>
-</section>
-
-<section id="quality">
-  <h2>Quality bar</h2>
-  <ul class="features">
-    <li><strong>Pure Go.</strong> <code>CGO_ENABLED=0</code> across the org. No cgo bindings, no native shims.</li>
-    <li><strong>100% test coverage.</strong> Every module is gated on it. Codecs are fuzz-tested against upstream reference implementations ; hashes are cross-checked against spec test vectors.</li>
-    <li><strong>Allocation-aware.</strong> Hot paths avoid per-call allocations ; APIs expose buffered variants where it matters.</li>
-    <li><strong>Multi-arch.</strong> Pure-Go reference implementations ; SIMD / NEON acceleration layered behind build tags where it makes sense.</li>
-    <li><strong>BSD-3-Clause</strong> on every source file.</li>
-  </ul>
-</section>
-
-<section id="users">
-  <h2>Who uses it</h2>
-  <p>
-    <a href="https://github.com/cloud-boot"><strong>cloud-boot</strong></a> uses
-    <code>lzfse</code> as the body compressor for its PE32+ / UKI packer
-    (<code>go-coff/efipack</code>). The broader content-addressable storage stack uses
-    <code>blake3</code> as the address function for layer / blob lookup. Both consumers
-    drove the original split &mdash; the codecs and the hashes already had to ship together.
-  </p>
-</section>
-{{ end }}
+  <footer class="wrap">
+    BSD-3-Clause · <a href="https://github.com/go-compressions">github.com/go-compressions</a> ·
+    SIMD by <a href="https://github.com/go-asmgen/asmgen">go-asmgen</a>
+  </footer>
+</body>
+</html>
