@@ -50,7 +50,7 @@
   <div class="grid">
     <div class="card">
       <h4><a href="https://github.com/go-compressions/lz4">lz4</a></h4>
-      <p>Pure-Go LZ4 block codec, wire-compatible with <code>pierrec/lz4</code>. Honest framing: it matches the reference on ratio and trails the fastest Go libs on raw speed; its match-finder delegates to <a href="https://github.com/go-simd/matchlen">go-simd/matchlen</a>, whose SIMD common-prefix kernel runs on all six of Go's 64-bit targets.</p>
+      <p>Pure-Go LZ4 block codec, wire-compatible with <code>pierrec/lz4</code>. Beats <code>pierrec</code> on compression ratio (text ~4.6% smaller); honestly slower on speed. Match extension delegates to <a href="https://github.com/go-compressions/matchlen">matchlen</a>, whose SIMD common-prefix kernel runs on all six of Go's 64-bit targets.</p>
     </div>
     <div class="card">
       <h4><a href="https://github.com/go-compressions/lzfse">lzfse</a></h4>
@@ -75,8 +75,8 @@
   <h3>Docs</h3>
   <div class="grid">
     <div class="card">
-      <h4><a href="https://github.com/go-compressions/docs">docs</a></h4>
-      <p>Org-level documentation, design notes, NEON / archsimd notes.</p>
+      <h4><a href="https://go-compressions.github.io/docs/">docs</a></h4>
+      <p>Versioned documentation site (MkDocs Material): per-repo API, algorithm and honest performance pages, plus the org methodology. <a href="https://github.com/go-compressions/docs">Source →</a></p>
     </div>
   </div>
 </section>

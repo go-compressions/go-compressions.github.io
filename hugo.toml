@@ -40,3 +40,8 @@ disableKinds = ['taxonomy', 'term', 'rss', 'sitemap']
     name       = "Quality"
     url        = "#quality"
     weight     = 40
+  [[menu.main]]
+    identifier = "docs"
+    name       = "Docs"
+    url        = "https://go-compressions.github.io/docs/"
+    weight     = 50

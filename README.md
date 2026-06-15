@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/go-compressions/brand/main/social/go-compressions.png" alt="go-compressions/go-compressions.github.io" width="720"></p>
+
 # go-compressions.github.io
 
 Sources for **go-compressions.github.io** — the go-compressions landing page.
