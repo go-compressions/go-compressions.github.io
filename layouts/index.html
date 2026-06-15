@@ -1,5 +1,6 @@
 {{ define "main" }}
 <section class="hero">
+  <img class="hero-logo" src="{{ "img/logo.svg" | relURL }}" alt="go-compressions logo" width="96" height="96">
   <h1>
     <span class="accent">{{ .Site.Params.heroAccent }}</span>
     {{- with .Site.Params.statusBadge }}<span class="status">{{ . }}</span>{{ end -}}
@@ -47,6 +48,10 @@
   <h2>Repositories</h2>
   <h3>Compression codecs</h3>
   <div class="grid">
+    <div class="card">
+      <h4><a href="https://github.com/go-compressions/lz4">lz4</a></h4>
+      <p>Pure-Go LZ4 block codec, wire-compatible with <code>pierrec/lz4</code>. Honest framing: it matches the reference on ratio and trails the fastest Go libs on raw speed; its match-finder delegates to <a href="https://github.com/go-simd/matchlen">go-simd/matchlen</a>, whose SIMD common-prefix kernel runs on all six of Go's 64-bit targets.</p>
+    </div>
     <div class="card">
       <h4><a href="https://github.com/go-compressions/lzfse">lzfse</a></h4>
       <p>Pure-Go LZFSE / LZVN codec. LZFSE = LZVN + entropy stage, mirroring Apple's reference C implementation.</p>
