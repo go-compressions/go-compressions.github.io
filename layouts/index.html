@@ -101,6 +101,7 @@
       <span class="pill">amd64 · arm64 · riscv64 · loong64 · <strong>ppc64le (VSX)</strong> · <strong>s390x (vector facility)</strong></span>
       <span class="pill">6 SIMD targets · <strong>validated on 7 arches</strong> (+ ppc64 big-endian)</span>
       <span class="pill"><strong>ppc64le natively measured</strong> on POWER10</span>
+      <span class="pill"><strong>riscv64 natively measured</strong> on SpacemiT X60 (RVV)</span>
       <span class="pill">reference-validated</span>
       <span class="pill">100% coverage</span>
       <span class="pill">honest benchmarks</span>
@@ -130,7 +131,12 @@
       <strong>ppc64le is now natively measured on real POWER10 silicon</strong>
       (<a href="https://portal.cfarm.net/">GCC Compile Farm</a>, Go 1.26.4): lz4 encode runs
       <strong>1.8&times; scalar</strong> (1174 vs 644 MB/s) and beats <code>pierrec/lz4</code>
-      (1174 vs 1012 MB/s), with blake3 mix4 at <strong>4.5&times;</strong>. The s390x path stays
+      (1174 vs 1012 MB/s), with blake3 mix4 at <strong>4.5&times;</strong>.
+      <strong>riscv64 is now natively measured too</strong> on a SpacemiT X60
+      (<abbr title="RVV 1.0, a low-power in-order core &mdash; the only widely-available RVV silicon; an out-of-order RVV core would likely do better">RVV 1.0</abbr>,
+      GCC Compile Farm, Go 1.26.4): lz4 encode runs <strong>1.45&times; scalar</strong>
+      (110 vs 76 MB/s) and beats <code>pierrec/lz4</code> (110 vs 83 MB/s, ~1.32&times;),
+      with blake3 mix4 at <strong>2.9&times;</strong>. The s390x path stays
       qemu-validated (byte-identical to scalar), with native throughput pending an IBM Z runner.
       Beyond the six SIMD targets, every library also builds and passes its tests bit-exact on a
       <strong>seventh architecture, ppc64 (big-endian)</strong> on real POWER9 silicon &mdash; six
