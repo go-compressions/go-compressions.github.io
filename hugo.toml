@@ -37,12 +37,19 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   arch = "pure-Go (scalar)"
   result = "single static-binary CLI over lzfse — stdin/stdout by default, optional -v summary (ratio + timing). Pure Go, no C toolchain."
 [[params.repos]]
+  name = "deflate"
+  accel = "DEFLATE / RFC 1951 codec (Deflate / Inflate, Writer / Reader)"
+  kind = "codec"
+  type = "lib"
+  arch = "match extension via matchlen (SIMD common-prefix kernel)"
+  result = "bidirectionally wire-compatible with the standard library's compress/flate — flate decodes every stream our Writer produces and we decode every stream flate.NewWriter produces (differential-fuzzed both ways). All three block types (stored / fixed / dynamic Huffman), 32 KiB sliding window, typed errors on every malformed-input path. The LZ77 parse delegates match extension to matchlen's SIMD common-prefix kernel. Correctness-first: competitive encode on text, honestly slower decode than stdlib flate."
+[[params.repos]]
   name = "blake3"
   accel = "BLAKE3 cryptographic hash (Sum256 / Sum512 / XOF)"
   kind = "hash"
   type = "lib"
   arch = "SIMD mix4 on all 6 arches (VSX / vector facility)"
-  result = "pure-Go, cgo-free BLAKE3, verified against the official test vectors; the mix4 core runs go-asmgen SIMD on all 6 of Go's 64-bit targets. Streaming hash.Hash-style API plus arbitrary-length extendable output. Default unkeyed mode (keyed / KDF not implemented)."
+  result = "pure-Go, cgo-free BLAKE3, verified against the official test vectors; the mix4 core runs go-asmgen SIMD on all 6 of Go's 64-bit targets. Streaming hash.Hash-style API plus arbitrary-length extendable output (XOF). All three BLAKE3 modes ship: unkeyed hashing, keyed hashing (MAC, via NewKeyed) and key derivation (NewDeriveKey / KDF)."
 [[params.repos]]
   name = "b3sum"
   accel = "BLAKE3 checksum CLI (print / verify)"

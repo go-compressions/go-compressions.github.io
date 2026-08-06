@@ -6,28 +6,27 @@ Sources for **go-compressions.github.io** — the go-compressions landing page.
 Built by [Hugo](https://gohugo.io) — same toolchain and same template
 shape as [cloud-boot.github.io](https://github.com/cloud-boot/cloud-boot.github.io)
 and [openweft.github.io](https://github.com/openweft/openweft.github.io).
-Warm-amber palette so it reads as a sibling project page.
+Teal/cyan accent with codec-vs-hash colour coding, plus a three-state
+light/dark/system theme toggle (default = system).
 
 ## Layout
 
 ```text
 .
-├── hugo.toml                       Site config + hero params
+├── hugo.toml                       Site config + per-repo card params ([[params.repos]])
 ├── content/
 │   └── _index.md                   Homepage marker (empty)
-├── data/
-│   └── mesh.toml                   Pipeline visualisation: input / transforms / output
 ├── layouts/
-│   ├── _default/baseof.html        Outer HTML shell
-│   ├── index.html                  Homepage body (go-compressions specific)
-│   └── partials/
-│       ├── nav.html                Topnav with brand + menu
-│       ├── footer.html             Footer
-│       └── mesh.html               Animated SVG (reads data/mesh.toml)
+│   └── index.html                  Self-contained homepage (inline CSS/JS, repo cards, theme toggle)
 ├── static/
-│   └── css/main.css                Warm-amber palette + mesh styling
+│   ├── favicon.svg                 Tab icon
+│   └── img/logo.svg                88px org logo
 └── public/                         Hugo build output (gitignored — built by CI)
 ```
+
+Each repository card is a `[[params.repos]]` entry in `hugo.toml`
+(`name`, `accel`, `kind`, `type`, `arch`, `result`); `layouts/index.html`
+ranges over them. Add or edit a card there, not in the template.
 
 ## Build locally
 
