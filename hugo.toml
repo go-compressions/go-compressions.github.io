@@ -9,6 +9,31 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
 # "kind" = codec vs hash; "type" = lib vs cli (every lib has a reference CLI).
 # "arch" states the SIMD coverage honestly (6-arch SIMD vs pure-Go scalar).
 [[params.repos]]
+  name = "compress"
+  accel = "compress(1) .Z reader"
+  kind = "codec"
+  result = "the LZW the standard library's compress/lzw cannot read, because .Z has its own header and a code width that grows. Eight .Z streams are committed, each verified to round-trip through the reference tool, and the corpus asserts its own premise: that some stream actually widened and some did not, since a corpus that never widens tests nothing."
+[[params.repos]]
+  name = "bzip2"
+  accel = "bzip2 ENCODER (NewWriter)"
+  kind = "codec"
+  result = "the half the standard library does not have — compress/bzip2 only reads. Every archive the tests produce is read back by two decoders this project did not write: compress/bzip2, and the reference bzip2 binary under `bzip2 -t`, which verifies rather than merely parses. Named honestly: 13 123 bytes where `bzip2 -9` writes 11 526 (+13.9%)."
+[[params.repos]]
+  name = "lzip"
+  accel = "lzip (.lz) reader"
+  kind = "codec"
+  result = "LZMA with lzip's own framing and CRC. Every .lz in testdata was written by the real GNU lzip 1.26 and plzip 1.13 rather than hand-assembled from the specification, and the generator asserts its own premise: `lzip -dc` must read a file back before it is allowed to become a fixture."
+[[params.repos]]
+  name = "lzo"
+  accel = "LZO1X decoder + lzop (.lzo) container"
+  kind = "codec"
+  result = "written from a published prose description of the bytestream, because liblzo2 is GPL-2.0 and this is BSD-3-Clause: no liblzo2 code was read, ported or adapted. Decoder only, and the README says so rather than leaving it to be discovered."
+[[params.repos]]
+  name = "adc"
+  accel = "Apple Data Compression (ADC) decoder"
+  kind = "codec"
+  result = "the UDCO flavour of a UDIF disk image. The fixtures come off streams Apple wrote — `hdiutil convert -format UDCO` — with the ADC run lifted out of the resulting blkx table, so nothing here is checked against an encoder of ours."
+[[params.repos]]
   name = "lz4"
   accel = "LZ4 block codec (CompressBlock / DecompressBlock)"
   kind = "codec"
