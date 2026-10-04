@@ -69,6 +69,13 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   arch = "match extension via matchlen (SIMD common-prefix kernel)"
   result = "bidirectionally wire-compatible with the standard library's compress/flate — flate decodes every stream our Writer produces and we decode every stream flate.NewWriter produces (differential-fuzzed both ways). All three block types (stored / fixed / dynamic Huffman), 32 KiB sliding window, typed errors on every malformed-input path. The LZ77 parse delegates match extension to matchlen's SIMD common-prefix kernel. Correctness-first: competitive encode on text, honestly slower decode than stdlib flate."
 [[params.repos]]
+  name = "appleoracle"
+  accel = "macOS libcompression as a test oracle"
+  kind = "oracle"
+  type = "lib"
+  arch = "cgo on macOS; refuses elsewhere"
+  result = "nothing here is a codec. It asks the platform what the bytes should be, so a test can judge an implementation against Apple's own LZFSE/LZVN/LZ4 rather than against bytes the code under test produced. The stub on every other platform REFUSES rather than returning a plausible empty answer, because libcompression returns 0 for failure, for incompressible input and for empty input alike. Replaced 84 lines of cgo in lzfse with a 21-line relay, and gave lz4 the oracle it never had."
+[[params.repos]]
   name = "blake3"
   accel = "BLAKE3 cryptographic hash (Sum256 / Sum512 / XOF)"
   kind = "hash"
