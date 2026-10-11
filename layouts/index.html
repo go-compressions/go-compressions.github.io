@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+{{/* Dark Reader repaints pages that already draw their own dark theme, as this one does: ask it to stand aside. */}}
+<meta name="darkreader-lock">
 <title>{{ .Site.Title }} — pure-Go compression codecs and content-addressable hashes</title>
 <meta name="description" content="Pure-Go byte-stream primitives: lossless compression codecs (lz4, lzfse / lzvn, lzfsec) and content-addressable hashes (blake3, b3sum). CGO_ENABLED=0, 100% coverage, honest benchmarks; lz4 match extension and blake3 ride go-asmgen SIMD on all 6 of Go's 64-bit targets — amd64/arm64/riscv64/loong64/ppc64le/s390x.">
 <style>
