@@ -17,7 +17,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "compress"
   accel = "compress(1) .Z reader"
   kind = "codec"
-  result = "the LZW the standard library's compress/lzw cannot read, because .Z has its own header and a code width that grows. Eight .Z streams are committed, each verified to round-trip through the reference tool, and the corpus asserts its own premise: that some stream actually widened and some did not, since a corpus that never widens tests nothing."
+  result = "the LZW the standard library's compress/lzw cannot read, because .Z has its own header and a code width that grows. Eight .Z streams are committed, each verified to round-trip through the reference tool, and the corpus asserts its own premise: that some stream actually widened and some did not, since a corpus that never widens tests nothing. What the reader holds does not depend on the stream; its expansion is documented, and a caller that collects everything should cap it with io.LimitReader."
 [[params.repos]]
   name = "bzip2"
   accel = "bzip2 ENCODER (NewWriter)"
@@ -27,24 +27,24 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "lzip"
   accel = "lzip (.lz) reader"
   kind = "codec"
-  result = "LZMA with lzip's own framing and CRC. Every .lz in testdata was written by the real GNU lzip 1.26 and plzip 1.13 rather than hand-assembled from the specification, and the generator asserts its own premise: `lzip -dc` must read a file back before it is allowed to become a fixture."
+  result = "LZMA with lzip's own framing and CRC. Every .lz in testdata was written by the real GNU lzip 1.26 and plzip 1.13 rather than hand-assembled from the specification, and the generator asserts its own premise: `lzip -dc` must read a file back before it is allowed to become a fixture. Bounds input-driven allocations: the dictionary a member header asks for is capped at 64 MiB (DefaultMaxDictSize) by NewReader, NewReaderLimit sets another, and an excess is ErrTooLarge."
 [[params.repos]]
   name = "lzo"
   accel = "LZO1X decoder + lzop (.lzo) container"
   kind = "codec"
-  result = "written from a published prose description of the bytestream, because liblzo2 is GPL-2.0 and this is BSD-3-Clause: no liblzo2 code was read, ported or adapted. Decoder only, and the README says so rather than leaving it to be discovered."
+  result = "written from a published prose description of the bytestream, because liblzo2 is GPL-2.0 and this is BSD-3-Clause: no liblzo2 code was read, ported or adapted. Decoder only, and the README says so rather than leaving it to be discovered. Bounds input-driven allocations: output is capped at DefaultMaxOutput, with LZO1X's 255:1 expansion as the structural limit, and an excess is ErrTooLarge."
 [[params.repos]]
   name = "adc"
   accel = "Apple Data Compression (ADC) decoder"
   kind = "codec"
-  result = "the UDCO flavour of a UDIF disk image. The fixtures come off streams Apple wrote — `hdiutil convert -format UDCO` — with the ADC run lifted out of the resulting blkx table, so nothing here is checked against an encoder of ours."
+  result = "the UDCO flavour of a UDIF disk image. The fixtures come off streams Apple wrote — `hdiutil convert -format UDCO` — with the ADC run lifted out of the resulting blkx table, so nothing here is checked against an encoder of ours. Bounds input-driven allocations: Decompress is capped at DefaultMaxOutput (1 GiB), DecompressLimit sets another, and an excess is ErrTooLarge."
 [[params.repos]]
   name = "lz4"
   accel = "LZ4 block codec (CompressBlock / DecompressBlock)"
   kind = "codec"
   type = "lib"
   arch = "SIMD on all 6 arches (match extension via matchlen)"
-  result = "wire-compatible with pierrec/lz4 — beats it on compression ratio (text ~4.6% smaller) and now decodes at parity with its hand-written arm64-asm decoder (~1.0-1.4x on real files, beating it on ooffice/sao); honestly slower on encode speed. Match extension delegates to matchlen's SIMD common-prefix kernel."
+  result = "wire-compatible with pierrec/lz4 — beats it on compression ratio (text ~4.6% smaller) and now decodes at parity with its hand-written arm64-asm decoder (~1.0-1.4x on real files, beating it on ooffice/sao); honestly slower on encode speed. Match extension delegates to matchlen's SIMD common-prefix kernel. Bounds input-driven allocations: block output stops at DefaultMaxOutput (1 GiB, ErrTooLarge) and Apple frame sizes at DefaultMaxBlock (16 MiB); DecompressBlockLimit, DecompressAppleLimit and DecompressAppleStreamLimit set other ceilings."
 [[params.repos]]
   name = "lz4c"
   accel = "LZ4 CLI (compress / decompress)"
@@ -58,7 +58,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   kind = "codec"
   type = "lib"
   arch = "pure-Go (scalar)"
-  result = "byte-compatible with the reference liblzfse: LZFSE = LZVN + FSE entropy stage. Auto-picks LZVN for ≤4 KiB inputs, LZFSE V1/V2 for larger; round-trips against Apple's C reference. Ratio within ~1-3% of Apple; decode now within ~1.6-2.1x of Apple's -O3 C reference (was ~2-3x)."
+  result = "byte-compatible with the reference liblzfse: LZFSE = LZVN + FSE entropy stage. Auto-picks LZVN for ≤4 KiB inputs, LZFSE V1/V2 for larger; round-trips against Apple's C reference. Ratio within ~1-3% of Apple; decode now within ~1.6-2.1x of Apple's -O3 C reference (was ~2-3x). Bounds input-driven allocations: every size a stream declares is checked before anything is allocated; DecompressLimit sets the ceiling, DefaultMaxOutput is 1 GiB, and an excess is ErrTooLarge."
 [[params.repos]]
   name = "lzfsec"
   accel = "LZFSE CLI (compress / decompress)"
@@ -72,14 +72,14 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   kind = "codec"
   type = "lib"
   arch = "match extension via matchlen (SIMD common-prefix kernel)"
-  result = "bidirectionally wire-compatible with the standard library's compress/flate — flate decodes every stream our Writer produces and we decode every stream flate.NewWriter produces (differential-fuzzed both ways). All three block types (stored / fixed / dynamic Huffman), 32 KiB sliding window, typed errors on every malformed-input path. The LZ77 parse delegates match extension to matchlen's SIMD common-prefix kernel. Correctness-first: competitive encode on text, honestly slower decode than stdlib flate."
+  result = "bidirectionally wire-compatible with the standard library's compress/flate — flate decodes every stream our Writer produces and we decode every stream flate.NewWriter produces (differential-fuzzed both ways). All three block types (stored / fixed / dynamic Huffman), 32 KiB sliding window, typed errors on every malformed-input path. The LZ77 parse delegates match extension to matchlen's SIMD common-prefix kernel. Correctness-first: competitive encode on text, honestly slower decode than stdlib flate. Bounds input-driven allocations: NewReader buffers a bounded amount whatever the stream says, and Inflate stops at DefaultMaxOutput (1 GiB) with ErrTooLarge; InflateLimit sets another."
 [[params.repos]]
   name = "appleoracle"
   accel = "macOS libcompression as a test oracle"
   kind = "oracle"
   type = "lib"
   arch = "cgo on macOS; refuses elsewhere"
-  result = "nothing here is a codec. It asks the platform what the bytes should be, so a test can judge an implementation against Apple's own LZFSE/LZVN/LZ4 rather than against bytes the code under test produced. The stub on every other platform REFUSES rather than returning a plausible empty answer, because libcompression returns 0 for failure, for incompressible input and for empty input alike. Replaced 84 lines of cgo in lzfse with a 21-line relay, and gave lz4 the oracle it never had."
+  result = "nothing here is a codec. It asks the platform what the bytes should be, so a test can judge an implementation against Apple's own LZFSE/LZVN/LZ4 rather than against bytes the code under test produced. The stub on every other platform REFUSES rather than returning a plausible empty answer, because libcompression returns 0 for failure, for incompressible input and for empty input alike. Replaced 84 lines of cgo in lzfse with a 21-line relay, and gave lz4 the oracle it never had. Decode bounds its sizes: a want below zero or above MaxDecode (1 GiB) is a refusal."
 [[params.repos]]
   name = "blake3"
   accel = "BLAKE3 cryptographic hash (Sum256 / Sum512 / XOF)"
