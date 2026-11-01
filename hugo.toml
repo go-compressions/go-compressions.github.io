@@ -74,6 +74,13 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   arch = "match extension via matchlen (SIMD common-prefix kernel)"
   result = "bidirectionally wire-compatible with the standard library's compress/flate — flate decodes every stream our Writer produces and we decode every stream flate.NewWriter produces (differential-fuzzed both ways). All three block types (stored / fixed / dynamic Huffman), 32 KiB sliding window, typed errors on every malformed-input path. The LZ77 parse delegates match extension to matchlen's SIMD common-prefix kernel. Correctness-first: competitive encode on text, honestly slower decode than stdlib flate. Bounds input-driven allocations: NewReader buffers a bounded amount whatever the stream says, and Inflate stops at DefaultMaxOutput (1 GiB) with ErrTooLarge; InflateLimit sets another."
 [[params.repos]]
+  name = "xz"
+  accel = "xz / LZMA2 / lzma-alone DECODER"
+  kind = "codec"
+  type = "lib"
+  arch = "pure-Go (scalar)"
+  result = "memory follows the decoded data, not the sizes a header declares. ulikunitz/xz allocates every LZMA2 dictionary whole from the block header (up to 4 GiB from about a hundred bytes); here the window of a port of the LZMA SDK reference decoder starts at 16 KiB and doubles as data arrives, so a block declaring 1 GiB to 4 GiB over 44 bytes allocates 22 672 bytes. MaxDictionary (256 MiB by default) is an exact ceiling: ErrTooLarge before allocating. Checked against fixtures from the xz tool, the 80 test files of XZ Utils and ulikunitz's own writer; LZMA2, Delta and all eight BCJ filters; 100% coverage gated on amd64, arm64, Windows and four emulated architectures. Decode speed against ulikunitz and xz -dc is not claimed yet: the benchmark refused to run on a loaded machine."
+[[params.repos]]
   name = "appleoracle"
   accel = "macOS libcompression as a test oracle"
   kind = "oracle"
