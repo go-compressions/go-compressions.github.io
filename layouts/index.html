@@ -45,15 +45,13 @@
   <div class="hero"><div class="wrap">
     <div>
       <h1 class="head">go-compressions</h1>
-      <p class="sub">Pure-Go <strong>byte-stream primitives</strong> — lossless compression
+      <p class="sub">{{ if partial "mantra-on.html" . }}Go{{ else }}Pure-Go{{ end }} <strong>byte-stream primitives</strong> — lossless compression
       codecs (<code>lz4</code>, <code>lzfse</code>, <code>lzfsec</code>) and content-addressable
       hashes (<code>blake3</code>, <code>b3sum</code>), allocation-aware and
-      <strong>cgo-free</strong> on plain <code>go build</code>.</p>
-      <div class="cta">
-        <a class="btn btn-primary" href="https://go-compressions.github.io/docs/">{{ partial "icons/book.html" . }}Documentation</a>
-        <a class="btn btn-ghost" href="https://github.com/go-compressions">{{ partial "icons/github.html" . }}GitHub</a>
-      </div>
-      <div class="trust">{{ if not (partial "mantra-on.html" $) }}<span class="pill">CGO_ENABLED=0</span>{{ end }}<span class="pill">go-asmgen-powered SIMD on <strong>all 6 of Go's 64-bit targets</strong></span><span class="pill">amd64 · arm64 · riscv64 · loong64 · <strong>ppc64le (VSX)</strong> · <strong>s390x (vector facility)</strong></span><span class="pill">6 SIMD targets · <strong>validated on 7 arches</strong> (+ ppc64 big-endian)</span><span class="pill"><strong>ppc64le natively measured</strong> on POWER10</span><span class="pill"><strong>riscv64 natively measured</strong> on SpacemiT X60 (RVV)</span><span class="pill">reference-validated</span><span class="pill">100% coverage</span><span class="pill">honest benchmarks</span></div>
+      <strong>{{ if not (partial "mantra-on.html" $) }}cgo-free{{ end }}</strong> on plain <code>go build</code>.</p>
+      {{/* [[params.cta]] in hugo.toml: the kit renders the row */}}
+      {{ partial "cta.html" . }}
+      <div class="trust">{{ if not (partial "mantra-on.html" $) }}{{ if not (partial "mantra-on.html" $) }}<span class="pill">CGO_ENABLED=0</span>{{ end }}{{ end }}<span class="pill">go-asmgen-powered SIMD on <strong>all 6 of Go's 64-bit targets</strong></span><span class="pill">amd64 · arm64 · riscv64 · loong64 · <strong>ppc64le (VSX)</strong> · <strong>s390x (vector facility)</strong></span><span class="pill">6 SIMD targets · <strong>validated on 7 arches</strong> (+ ppc64 big-endian)</span><span class="pill"><strong>ppc64le natively measured</strong> on POWER10</span><span class="pill"><strong>riscv64 natively measured</strong> on SpacemiT X60 (RVV)</span><span class="pill">reference-validated</span><span class="pill">100% coverage</span><span class="pill">honest benchmarks</span></div>
     </div>
     {{ partial "hero-carousel.html" . }}
   </div></div>
