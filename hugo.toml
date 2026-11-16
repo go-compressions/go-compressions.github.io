@@ -32,7 +32,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "lzo"
   accel = "LZO1X decoder + lzop (.lzo) container"
   kind = "codec"
-  result = "written from a published prose description of the bytestream, because liblzo2 is GPL-2.0 and this is BSD-3-Clause: no liblzo2 code was read, ported or adapted. Decoder only, and the README says so rather than leaving it to be discovered. Bounds input-driven allocations: output is capped at DefaultMaxOutput (1 GiB), with LZO1X's 255:1 expansion as the structural limit, and an excess is ErrTooLarge."
+  result = "written from a published prose description of the bytestream, because liblzo2 is GPL-2.0 and this is BSD-3-Clause: no liblzo2 code was read, ported or adapted. Decoder only, and the README says so rather than leaving it to be discovered. v0.4.0 adds DecodeBlock, about 1.7x liblzo2 single-core, now the LZO decoder behind btrfs and squashfs. Bounds input-driven allocations: output is capped at DefaultMaxOutput (1 GiB), with LZO1X's 255:1 expansion as the structural limit, and an excess is ErrTooLarge."
 [[params.repos]]
   name = "adc"
   accel = "Apple Data Compression (ADC) decoder"
@@ -44,7 +44,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   kind = "codec"
   type = "lib"
   arch = "SIMD on all 6 arches (match extension via matchlen)"
-  result = "wire-compatible with pierrec/lz4 — beats it on compression ratio (text ~4.6% smaller) and now decodes at parity with its hand-written arm64-asm decoder (~1.0-1.4x on real files, beating it on ooffice/sao); honestly slower on encode speed. Match extension delegates to matchlen's SIMD common-prefix kernel. Bounds input-driven allocations: block output stops at DefaultMaxOutput (1 GiB, ErrTooLarge) and Apple frame sizes at DefaultMaxBlock (16 MiB); DecompressBlockLimit, DecompressAppleLimit and DecompressAppleStreamLimit set other ceilings."
+  result = "wire-compatible with pierrec/lz4 — beats it on compression ratio (text ~4.6% smaller) and now decodes at parity with its hand-written arm64-asm decoder (~1.0-1.4x on real files, beating it on ooffice/sao); honestly slower on encode speed. v0.5.1 adds DecodeBlock: allocation-free, with an asm fast path on amd64 and arm64, ahead of liblz4 on arm64, and the single LZ4 decoder used by go-filesystems/zfs and squashfs. Match extension delegates to matchlen's SIMD common-prefix kernel. Bounds input-driven allocations: block output stops at DefaultMaxOutput (1 GiB, ErrTooLarge) and Apple frame sizes at DefaultMaxBlock (16 MiB); DecompressBlockLimit, DecompressAppleLimit and DecompressAppleStreamLimit set other ceilings."
 [[params.repos]]
   name = "lz4c"
   accel = "LZ4 CLI (compress / decompress)"
