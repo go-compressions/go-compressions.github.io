@@ -72,7 +72,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   kind = "codec"
   type = "lib"
   arch = "match extension via matchlen (SIMD common-prefix kernel)"
-  result = "bidirectionally wire-compatible with the standard library's compress/flate — flate decodes every stream our Writer produces and we decode every stream flate.NewWriter produces (differential-fuzzed both ways). All three block types (stored / fixed / dynamic Huffman), 32 KiB sliding window, typed errors on every malformed-input path. The LZ77 parse delegates match extension to matchlen's SIMD common-prefix kernel. Correctness-first: competitive encode on text, honestly slower decode than stdlib flate. Bounds input-driven allocations: NewReader buffers a bounded amount whatever the stream says, and Inflate stops at DefaultMaxOutput (1 GiB) with ErrTooLarge; InflateLimit sets another."
+  result = "bidirectionally wire-compatible with the standard library's compress/flate — flate decodes every stream our Writer produces and we decode every stream flate.NewWriter produces (differential-fuzzed both ways). All three block types (stored / fixed / dynamic Huffman), 32 KiB sliding window, typed errors on every malformed-input path. The LZ77 parse delegates match extension to matchlen's SIMD common-prefix kernel. Correctness-first: competitive encode on text, libdeflate-style table decoding in both Inflate (2.5 to 3 times klauspost/compress) and, since v0.3.0, the streaming NewReader (streaming speed not yet measured). Bounds input-driven allocations: NewReader buffers a bounded amount whatever the stream says, and Inflate stops at DefaultMaxOutput (1 GiB) with ErrTooLarge; InflateLimit sets another."
 [[params.repos]]
   name = "xz"
   accel = "xz / LZMA2 / lzma-alone DECODER"
